@@ -1,6 +1,7 @@
 package pepse.world.daynight;
 
 import danogl.GameObject;
+import danogl.components.CoordinateSpace;
 import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
@@ -18,6 +19,7 @@ public class Night {
         GameObject night = new GameObject(
                 Vector2.ZERO, windowDimensions, blackScreen);
         night.setTag("night");
+        night.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
 
         new Transition<Float>(
                 night, night.renderer()::setOpaqueness, MIDDAY_OPACITY, MIDNIGHT_OPACITY,
