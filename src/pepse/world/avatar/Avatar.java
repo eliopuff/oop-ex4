@@ -7,7 +7,16 @@ import danogl.gui.rendering.AnimationRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
+import java.awt.event.KeyEvent;
+
 public class Avatar extends GameObject {
+    private static final float RUN_COST = 2f;
+    private static final float JUMP_COST = 20f;
+    private static final float DOUBLE_JUMP_COST = 50f;
+    private static final float VELOCITY_X = 400;
+    private static final float VELOCITY_Y = -650;
+    private static final float GRAVITY = 600;
+
     private static final String IDLE_PATH = "assets/idle_0.png";
     private static final String[] IDLE_PATHS = {
             "assets/idle_0.png",
@@ -34,7 +43,7 @@ public class Avatar extends GameObject {
                   UserInputListener inputListener,
                   ImageReader imageReader){
         super(Vector2.ZERO,
-                Vector2.ONES,
+                new Vector2(300,200),
                 new AnimationRenderable(IDLE_PATHS, imageReader, true, TIME_BETWEEN_FRAMES));
 
         this.idleRenderable = this.renderer().getRenderable();
@@ -43,5 +52,18 @@ public class Avatar extends GameObject {
 
         this.inputListener = inputListener;
 
+    }
+
+    @Override
+    public void update(float deltaTime){
+        super.update(deltaTime);
+        float xVel = 0;
+        if(inputListener.isKeyPressed(KeyEvent.VK_LEFT))
+            xVel -= VELOCITY_X;
+        if(inputListener.isKeyPressed(KeyEvent.VK_RIGHT))
+            xVel += VELOCITY_X;
+        transform().setVelocityX(xVel);
+        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0)
+            transform().setVelocityY(VELOCITY_Y);
     }
 }
