@@ -17,7 +17,11 @@ public class Terrain {
     private final float groundHeightAtX0;
 
     public Terrain(Vector2 windowDimensions, int seed){
-        groundHeightAtX0 = windowDimensions.y() * HEIGHT_FACTOR;
+        groundHeightAtX0 = getGroundHeightAtX0(windowDimensions);
+    }
+
+    public static float getGroundHeightAtX0(Vector2 windowDimensions) {
+        return windowDimensions.y() * HEIGHT_FACTOR;
     }
 
     public float groundHeightAt(float x) {
