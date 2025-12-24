@@ -12,6 +12,7 @@ import pepse.world.Sky;
 import pepse.world.Terrain;
 import pepse.world.daynight.Night;
 import pepse.world.daynight.Sun;
+import pepse.world.daynight.SunHalo;
 
 import java.util.List;
 
@@ -19,7 +20,8 @@ import java.util.List;
 public class PepseGameManager extends GameManager {
     private static final int CYCLE_LENGTH = 30;
     private static final int LAYER_NIGHT = Layer.UI-2;
-    private static final int LAYER_SUN = Layer.BACKGROUND+1;
+    private static final int LAYER_SUN = Layer.BACKGROUND+2;
+    private static final int LAYER_SUN_HALO = Layer.BACKGROUND+1;
 
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
@@ -34,8 +36,9 @@ public class PepseGameManager extends GameManager {
         }
         gameObjects().addGameObject(Night.create(windowController.getWindowDimensions(),CYCLE_LENGTH),
                 LAYER_NIGHT);
-        gameObjects().addGameObject(Sun.create(windowController.getWindowDimensions(),CYCLE_LENGTH),
-                LAYER_SUN);
+        GameObject sun = Sun.create(windowController.getWindowDimensions(),CYCLE_LENGTH);
+        gameObjects().addGameObject(sun, LAYER_SUN);
+        gameObjects().addGameObject(SunHalo.create(sun), LAYER_SUN_HALO);
     }
 
     public static void main(String[] args) {
