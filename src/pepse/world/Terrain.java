@@ -13,6 +13,8 @@ public class Terrain {
     private static final float HEIGHT_FACTOR = (2/3f);
     private static final Color BASE_GROUND_COLOR = new Color(212,
             123, 74);
+    private static final String BLOCK_SUB_TAG = "Block_sub";
+    private static final String BLOCK_TOP_TAG = "Block_top";
 
     private final float groundHeightAtX0;
 
@@ -37,14 +39,14 @@ public class Terrain {
             float height = (float) (Math.floor(groundHeightAt(x) / Block.SIZE) * Block.SIZE);
 
             Block topBlock = new Block(new Vector2(x, height), rectangle);
-            topBlock.setTag("Block_top");
+            topBlock.setTag(BLOCK_TOP_TAG);
             blocks.add(topBlock);
 
             float startY = height - Block.SIZE;
             float endY = height + TERRAIN_DEPTH*Block.SIZE;
             for (float y = startY; y < endY; y+= Block.SIZE){
                 Block block = new Block(new Vector2(x, y), rectangle);
-                block.setTag("Block_sub");
+                block.setTag(BLOCK_SUB_TAG);
                 blocks.add(block);
             }
         }
