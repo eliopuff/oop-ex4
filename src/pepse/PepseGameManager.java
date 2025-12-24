@@ -19,7 +19,7 @@ import java.util.List;
 public class PepseGameManager extends GameManager {
     private static final int CYCLE_LENGTH = 30;
     private static final int LAYER_NIGHT = Layer.UI-2;
-    private static final int LAYER_SUN = Layer.UI-1;
+    private static final int LAYER_SUN = Layer.BACKGROUND+1;
 
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
