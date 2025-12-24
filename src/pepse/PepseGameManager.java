@@ -22,6 +22,7 @@ public class PepseGameManager extends GameManager {
     private static final int LAYER_NIGHT = Layer.UI-2;
     private static final int LAYER_SUN = Layer.BACKGROUND+2;
     private static final int LAYER_SUN_HALO = Layer.BACKGROUND+1;
+    private static final int BLOCK_RANGE_MAX = 20460;
 
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
@@ -30,7 +31,7 @@ public class PepseGameManager extends GameManager {
         GameObject sky = Sky.create(windowController.getWindowDimensions());
         gameObjects().addGameObject(sky, Layer.BACKGROUND);
         Terrain terrain = new Terrain(windowController.getWindowDimensions(),0);
-        List<Block> blocks = terrain.createInRange(0, 20460);
+        List<Block> blocks = terrain.createInRange(0, BLOCK_RANGE_MAX);
         for (Block block : blocks) {
             gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
         }
