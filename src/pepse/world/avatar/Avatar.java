@@ -98,6 +98,7 @@ public class Avatar extends GameObject {
         }
         transform().setVelocityX(xVel);
         if(jump) {
+            //TODO fix energy for moving at jumping
             if (getVelocity().y() == 0 && energy >= JUMP_COST) {
                 this.renderer().setRenderable(jumpRenderable);
                 this.energy -= JUMP_COST;
@@ -120,7 +121,7 @@ public class Avatar extends GameObject {
     @Override
     public void onCollisionEnter(GameObject other, Collision collision) {
         super.onCollisionEnter(other, collision);
-        if (collision.getNormal().y()>0 && (Objects.equals(other.getTag(), Terrain.BLOCK_TOP_TAG) ||
+        if ((Objects.equals(other.getTag(), Terrain.BLOCK_TOP_TAG) ||
                 Objects.equals(other.getTag(), Terrain.BLOCK_SUB_TAG))) {
             this.transform().setVelocityY(0);
             this.setCenter(this.getCenter().add(Vector2.UP.mult(collision.getPenetrationArea().y())));
