@@ -16,12 +16,14 @@ public class Terrain {
             123, 74);
     public static final String BLOCK_SUB_TAG = "Block_sub";
     public static final String BLOCK_TOP_TAG = "Block_top";
+    private static final Double NOISE_FACTOR = 7.0*Block.SIZE;
 
     private final float groundHeightAtX0;
     private final NoiseGenerator noiseGenerator;
 
     public Terrain(Vector2 windowDimensions, int seed){
         groundHeightAtX0 = getGroundHeightAtX0(windowDimensions);
+        noiseGenerator = new NoiseGenerator(seed, (int) groundHeightAtX0);
     }
 
     public static float getGroundHeightAtX0(Vector2 windowDimensions) {
@@ -29,7 +31,7 @@ public class Terrain {
     }
 
     public float groundHeightAt(float x) {
-        return groundHeightAtX0;
+        return groundHeightAtX0 + (float) noiseGenerator.noise(x, NOISE_FACTOR);
     }
 
     public List<Block> createInRange(int minX, int maxX) {
