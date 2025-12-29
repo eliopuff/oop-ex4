@@ -80,13 +80,15 @@ public class Avatar extends GameObject {
         boolean leftMove = inputListener.isKeyPressed(KeyEvent.VK_LEFT);
         this.jumpReleased = !jump || this.jumpReleased;
         float xVel = 0;
-        if(rightMove && !leftMove && energy >= RUN_COST) {
+        if(rightMove && !leftMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
             if (renderer().getRenderable() != runRenderable) {
                 this.renderer().setRenderable(runRenderable);
             }
             renderer().setIsFlippedHorizontally(false);
             xVel += VELOCITY_X;
-            this.energy -= RUN_COST;
+            if (this.getVelocity().y() == 0) {
+                this.energy -= RUN_COST;
+            }
         }
         if(leftMove && !rightMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
             if (renderer().getRenderable() != runRenderable) {
@@ -100,7 +102,6 @@ public class Avatar extends GameObject {
         }
         transform().setVelocityX(xVel);
         if(jump) {
-            //TODO fix energy for moving at jumping
             if (getVelocity().y() == 0 && energy >= JUMP_COST) {
                 this.renderer().setRenderable(jumpRenderable);
                 this.energy -= JUMP_COST;

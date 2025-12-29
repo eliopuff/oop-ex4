@@ -4,6 +4,7 @@ import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.utils.ColorSupplier;
+import pepse.utils.NoiseGenerator;
 
 import java.awt.*;
 import java.util.List;
@@ -17,6 +18,7 @@ public class Terrain {
     public static final String BLOCK_TOP_TAG = "Block_top";
 
     private final float groundHeightAtX0;
+    private final NoiseGenerator noiseGenerator;
 
     public Terrain(Vector2 windowDimensions, int seed){
         groundHeightAtX0 = getGroundHeightAtX0(windowDimensions);
