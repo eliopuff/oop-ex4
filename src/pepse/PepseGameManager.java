@@ -17,6 +17,8 @@ import pepse.world.avatar.EnergyViewer;
 import pepse.world.daynight.Night;
 import pepse.world.daynight.Sun;
 import pepse.world.daynight.SunHalo;
+import pepse.world.trees.Flora;
+import pepse.world.trees.Tree;
 
 import java.util.List;
 
@@ -48,6 +50,18 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
         GameObject energyViewer = EnergyViewer.create(Vector2.ZERO, avatar::getEnergy);
         gameObjects().addGameObject(energyViewer, Layer.UI);
+
+        Flora flora = new Flora(0, terrain::groundHeightAt);
+        List<Tree> trees = flora.createInRange(0, BLOCK_RANGE_MAX);
+        for (Tree tree : trees) {
+            gameObjects().addGameObject(tree.getLog(), Layer.STATIC_OBJECTS);
+            for (GameObject leaf : tree.getLeaves()) {
+                gameObjects().addGameObject(leaf, Layer.STATIC_OBJECTS);
+            }
+            for (GameObject fruit : tree.getFruits()) {
+                gameObjects().addGameObject(fruit, Layer.STATIC_OBJECTS);
+            }
+        }
     }
 
     public static void main(String[] args) {
