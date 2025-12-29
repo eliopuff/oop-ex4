@@ -88,13 +88,15 @@ public class Avatar extends GameObject {
             xVel += VELOCITY_X;
             this.energy -= RUN_COST;
         }
-        if(leftMove && !rightMove && energy >= RUN_COST) {
+        if(leftMove && !rightMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
             if (renderer().getRenderable() != runRenderable) {
                 this.renderer().setRenderable(runRenderable);
             }
             renderer().setIsFlippedHorizontally(true);
             xVel -= VELOCITY_X;
-            this.energy -= RUN_COST;
+            if (this.getVelocity().y() == 0) {
+                this.energy -= RUN_COST;
+            }
         }
         transform().setVelocityX(xVel);
         if(jump) {
