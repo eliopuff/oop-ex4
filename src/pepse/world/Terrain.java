@@ -35,20 +35,22 @@ public class Terrain {
     }
 
     public List<Block> createInRange(int minX, int maxX) {
-        Renderable rectangle = new RectangleRenderable(ColorSupplier.approximateColor(
-                BASE_GROUND_COLOR));
         List<Block> blocks = new java.util.ArrayList<>();
         int realMinX = (minX / Block.SIZE) * Block.SIZE;
         for (int x = realMinX; x <= maxX; x += Block.SIZE){
             float height = (float) (Math.floor(groundHeightAt(x) / Block.SIZE) * Block.SIZE);
+            Renderable rectangle = new RectangleRenderable(ColorSupplier.approximateColor(
+                    BASE_GROUND_COLOR));
 
             Block topBlock = new Block(new Vector2(x, height), rectangle);
-            topBlock.setTag(BLOCK_TOP_TAG);
+            topBlock.setTag(BLOCK_SUB_TAG);
             blocks.add(topBlock);
 
             float startY = height - Block.SIZE;
             float endY = height + TERRAIN_DEPTH*Block.SIZE;
             for (float y = startY; y < endY; y+= Block.SIZE){
+                rectangle = new RectangleRenderable(ColorSupplier.approximateColor(
+                        BASE_GROUND_COLOR));
                 Block block = new Block(new Vector2(x, y), rectangle);
                 block.setTag(BLOCK_TOP_TAG);
                 blocks.add(block);
