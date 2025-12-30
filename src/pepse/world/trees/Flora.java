@@ -10,20 +10,20 @@ public class Flora {
     private static final int TREE_DIST = 125;
     private static final float PLACEMENT_PROBABILITY = 0.1f;
     private static final int TREE_HEIGHT = 10;
-    private final Random random;
     private final Function<Float, Float> groundHeightFunction;
     private final int seed;
     private final float cycleLength;
 
 
     public Flora(int seed, Function<Float, Float> groundHeightFunction, float cycleLength) {
-        this.random = new Random(seed);
         this.groundHeightFunction = groundHeightFunction;
         this.seed = seed;
         this.cycleLength = cycleLength;
     }
+
     public List<Tree> createInRange(int minX, int maxX) {
         int realMinX = (minX / Block.SIZE) * Block.SIZE;
+        Random random = new Random(seed + realMinX);
         List<Tree> trees = new ArrayList<>();
         for (int x = realMinX; x <= maxX; x += Block.SIZE){
             if (random.nextFloat() < PLACEMENT_PROBABILITY) {

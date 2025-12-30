@@ -10,6 +10,7 @@ import danogl.gui.WindowController;
 import danogl.gui.rendering.Camera;
 import danogl.util.Vector2;
 import pepse.world.Block;
+import pepse.world.Chunk;
 import pepse.world.Sky;
 import pepse.world.Terrain;
 import pepse.world.avatar.Avatar;
@@ -30,23 +31,26 @@ public class PepseGameManager extends GameManager {
     private static final int LAYER_SUN_HALO = Layer.BACKGROUND+1;
     private static final int BLOCK_RANGE_MAX = 200;
     private static final int LEAF_LAYER =Layer.STATIC_OBJECTS-1 ;
+    private Terrain terrain;
+    private Avatar avatar;
+    private Flora flora;
+    private Chunk currentChunk, previousChunk, nextChunk;
+    private WindowController windowController;
 
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
-        Avatar avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
+        avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
+        this.windowController = windowController;
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
         setCamera(new Camera(avatar, Vector2.ZERO,
                 windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
         GameObject sky = Sky.create(windowController.getWindowDimensions());
         gameObjects().addGameObject(sky, Layer.BACKGROUND);
-        Terrain terrain = new Terrain(windowController.getWindowDimensions(),0);
-        List<Block> blocks = terrain.createInRange(0, (int)windowController.getWindowDimensions().x());
-        for (Block block : blocks) {
-            gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
-        }
+        terrain = new Terrain(windowController.getWindowDimensions(),0);
+
         gameObjects().addGameObject(Night.create(windowController.getWindowDimensions(),CYCLE_LENGTH),
                 LAYER_NIGHT);
         GameObject sun = Sun.create(windowController.getWindowDimensions(),CYCLE_LENGTH);
@@ -55,9 +59,49 @@ public class PepseGameManager extends GameManager {
         GameObject energyViewer = EnergyViewer.create(Vector2.ZERO, avatar::getEnergy);
         gameObjects().addGameObject(energyViewer, Layer.UI);
 
-        Flora flora = new Flora(0, terrain::groundHeightAt, CYCLE_LENGTH);
-        List<Tree> trees = flora.createInRange(0, (int)windowController.getWindowDimensions().x());
-        for (Tree tree : trees) {
+        flora = new Flora(0, terrain::groundHeightAt, CYCLE_LENGTH);
+        currentChunk = createChunk(0);
+        previousChunk = createChunk(-1);
+        nextChunk = createChunk(1);
+        addChunk(previousChunk);
+        addChunk(currentChunk);
+        addChunk(nextChunk);
+
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        int chunkSize = (int)windowController.getWindowDimensions().x();
+        int avatarChunkId =
+                (int) Math.floor(avatar.getCenter().x() / chunkSize);
+        if (previousChunk.getId() == avatarChunkId){
+            removeChunk(nextChunk);
+            nextChunk = currentChunk;
+            currentChunk = previousChunk;
+            previousChunk = createChunk(avatarChunkId - 1);
+            addChunk(previousChunk);
+        }
+        else if (nextChunk.getId() == avatarChunkId){
+            removeChunk(previousChunk);
+            previousChunk = currentChunk;
+            currentChunk = nextChunk;
+            nextChunk = createChunk(avatarChunkId + 1);
+            addChunk(nextChunk);
+        }
+    }
+
+    private Chunk createChunk(int chunkId) {
+        int chunkSize = (int)windowController.getWindowDimensions().x();
+        return new Chunk(chunkId,
+                terrain.createInRange(chunkId * chunkSize,
+                        (chunkId + 1) * chunkSize - 1),
+                flora.createInRange(chunkId * chunkSize,
+                        (chunkId + 1) * chunkSize - 1));
+    }
+
+    private void addChunk(Chunk chunk) {
+        for (Tree tree : chunk.getTrees()) {
             gameObjects().addGameObject(tree.getLog(), Layer.STATIC_OBJECTS);
             for (GameObject leaf : tree.getLeaves()) {
                 gameObjects().addGameObject(leaf, LEAF_LAYER);
@@ -66,7 +110,27 @@ public class PepseGameManager extends GameManager {
                 gameObjects().addGameObject(fruit, Layer.STATIC_OBJECTS);
             }
         }
+        for (Block block : chunk.getBlocks()) {
+            gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
+        }
     }
+
+    private void removeChunk(Chunk chunk) {
+        for (Tree tree : chunk.getTrees()) {
+            gameObjects().removeGameObject(tree.getLog(), Layer.STATIC_OBJECTS);
+            for (GameObject leaf : tree.getLeaves()) {
+                gameObjects().removeGameObject(leaf, LEAF_LAYER);
+            }
+            for (GameObject fruit : tree.getFruits()) {
+                gameObjects().removeGameObject(fruit, Layer.STATIC_OBJECTS);
+            }
+        }
+        for (Block block : chunk.getBlocks()) {
+            gameObjects().removeGameObject(block, Layer.STATIC_OBJECTS);
+        }
+    }
+
+
 
     public static void main(String[] args) {
         new PepseGameManager().run();
