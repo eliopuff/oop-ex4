@@ -13,6 +13,7 @@ import java.util.function.Function;
 public class Flora {
     private static final int TREE_DIST = 125;
     private static final float PLACEMENT_PROBABILITY = 0.2f;
+    private static final int TREE_HEIGHT = 10;
     private final Random random;
     private final Function<Float, Float> groundHeightFunction;
     private final int seed;
@@ -30,7 +31,7 @@ public class Flora {
             if (random.nextFloat() < PLACEMENT_PROBABILITY) {
                 float height =
                         (float) (Math.floor(groundHeightFunction.apply((float)x) / Block.SIZE) * Block.SIZE);
-                trees.add(new Tree(new Vector2(x, height), 7, x + seed));
+                trees.add(new Tree(new Vector2(x, height), TREE_HEIGHT, x + seed));
             }
         }
         return trees;

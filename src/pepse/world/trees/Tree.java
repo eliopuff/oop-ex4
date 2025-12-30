@@ -1,7 +1,11 @@
 package pepse.world.trees;
 
 import danogl.GameObject;
+import danogl.collisions.Collision;
 import danogl.components.GameObjectPhysics;
+import danogl.components.ScheduledTask;
+import danogl.components.Transition;
+import danogl.gui.rendering.OvalRenderable;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -18,13 +22,16 @@ public class Tree {
     private static final Color FRUIT_COLOR = new Color(200, 50, 50);
     private static final Renderable LOG_RENDERABLE = new RectangleRenderable(LOG_COLOR);
     private static final Renderable LEAF_RENDERABLE = new RectangleRenderable(LEAF_COLOR);
-    private static final Renderable FRUIT_RENDERABLE = new RectangleRenderable(FRUIT_COLOR);
+    private static final Renderable FRUIT_RENDERABLE = new OvalRenderable(FRUIT_COLOR);
     private static final String LOG_TAG = "log";
-    private static final String FRUIT_TAG = "fruit";
+    public static final String FRUIT_TAG = "fruit";
     private static final String LEAF_TAG = "leaf";
+    private static final String EATEN_TAG = "eaten";
     private static final int NUM_LEAVES_SIZE = 5;
     private static final int LEAF_SIZE = 20;
     private static final float LEAF_PROBABILITY = 0.7f;
+    private static final int FRUIT_SIZE = 15;
+    private final Random random;
 
     private GameObject log;
     private final ArrayList<GameObject> leaves = new ArrayList<>();
@@ -56,7 +63,7 @@ public class Tree {
 
     public Tree(Vector2 bottom, int height, int seed) {
         Vector2 logTopLeft = new Vector2(bottom.x(), bottom.y() - height*Block.SIZE - Block.SIZE);
-        Random random = new Random(seed);
+        this.random = new Random(seed);
         this.setLog(createLog(logTopLeft, height));
         for(int row = 0; row < NUM_LEAVES_SIZE; row++){
             for(int col = 0; col < NUM_LEAVES_SIZE; col++){
@@ -79,10 +86,33 @@ public class Tree {
         return log;
     }
 
-    private static GameObject createLeaf(Vector2 topLeftCorner){
+    private GameObject createLeaf(Vector2 topLeftCorner){
         GameObject leaf = new GameObject(topLeftCorner, new Vector2(LEAF_SIZE, LEAF_SIZE), LEAF_RENDERABLE);
         leaf.setTag(LEAF_TAG);
+        Runnable transitionTask = () -> {
+        new Transition<>(leaf, leaf.renderer()::setRenderableAngle, -8f, 8f,
+                Transition.CUBIC_INTERPOLATOR_FLOAT, 1.5f,
+                Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+        new Transition<>(leaf, leaf::setDimensions, new Vector2(LEAF_SIZE, LEAF_SIZE),
+                new Vector2(LEAF_SIZE * 1.2f, LEAF_SIZE * 1.2f),
+                Transition.CUBIC_INTERPOLATOR_VECTOR, 2f,
+                Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+        };
+        new ScheduledTask(leaf, random.nextFloat(), false, transitionTask);
         return leaf;
+    }
+
+    private GameObject createFruit(Vector2 topLeftCorner){
+        GameObject fruit = new GameObject(topLeftCorner, new Vector2(FRUIT_SIZE, FRUIT_SIZE),
+                FRUIT_RENDERABLE) {
+            @Override
+            public void onCollisionEnter(GameObject other, Collision collision) {
+                super.onCollisionEnter(other, collision);
+                this.setTag(EATEN_TAG);
+            }
+        };
+        fruit.setTag(FRUIT_TAG);
+        return fruit;
     }
 
 }

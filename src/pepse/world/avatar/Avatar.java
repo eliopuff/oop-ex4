@@ -8,6 +8,7 @@ import danogl.gui.rendering.AnimationRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.world.Terrain;
+import pepse.world.trees.Tree;
 
 import java.awt.event.KeyEvent;
 import java.util.Objects;
@@ -22,6 +23,7 @@ public class Avatar extends GameObject {
     private static final float GRAVITY = 600;
     private static final float AVATAR_SIZE = 50;
     private static final int MAX_ENERGY = 100;
+    private static final int FRUIT_ENERGY = 10;
 
     private static final String IDLE_PATH = "assets/idle_0.png";
     private static final String[] IDLE_PATHS = {
@@ -128,6 +130,14 @@ public class Avatar extends GameObject {
                 Objects.equals(other.getTag(), Terrain.BLOCK_SUB_TAG))) {
             this.transform().setVelocityY(0);
             this.setCenter(this.getCenter().add(Vector2.UP.mult(collision.getPenetrationArea().y())));
+        }
+        if ((Objects.equals(other.getTag(), Tree.FRUIT_TAG))) {
+            if (energy >= MAX_ENERGY - FRUIT_ENERGY){
+                energy = MAX_ENERGY;
+            }
+            else{
+                energy += FRUIT_ENERGY;
+            }
         }
     }
 }
