@@ -51,7 +51,7 @@ public class PepseGameManager extends GameManager {
         GameObject energyViewer = EnergyViewer.create(Vector2.ZERO, avatar::getEnergy);
         gameObjects().addGameObject(energyViewer, Layer.UI);
 
-        Flora flora = new Flora(0, terrain::groundHeightAt);
+        Flora flora = new Flora(0, terrain::groundHeightAt, CYCLE_LENGTH);
         List<Tree> trees = flora.createInRange(0, BLOCK_RANGE_MAX);
         for (Tree tree : trees) {
             gameObjects().addGameObject(tree.getLog(), Layer.STATIC_OBJECTS);

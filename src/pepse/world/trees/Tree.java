@@ -27,11 +27,11 @@ public class Tree {
     public static final String FRUIT_TAG = "fruit";
     private static final String LEAF_TAG = "leaf";
     private static final String EATEN_TAG = "eaten";
-    private static final int NUM_LEAVES_SIZE = 5;
-    private static final int LEAF_SIZE = 20;
+    private static final int NUM_LEAVES_SIZE = 7;
+    private static final int LEAF_SIZE = 25;
     private static final float LEAF_PROBABILITY = 0.7f;
     private static final int FRUIT_SIZE = 15;
-    private final Random random;
+    private static final float FRUIT_PROBABILITY = 0.05f;
 
     private GameObject log;
     private final ArrayList<GameObject> leaves = new ArrayList<>();
@@ -61,17 +61,21 @@ public class Tree {
         this.fruits.add(fruit);
     }
 
-    public Tree(Vector2 bottom, int height, int seed) {
+    public Tree(Vector2 bottom, int height, int seed, float cycleLength) {
         Vector2 logTopLeft = new Vector2(bottom.x(), bottom.y() - height*Block.SIZE - Block.SIZE);
-        this.random = new Random(seed);
+        Random random = new Random(seed);
         this.setLog(createLog(logTopLeft, height));
         for(int row = 0; row < NUM_LEAVES_SIZE; row++){
             for(int col = 0; col < NUM_LEAVES_SIZE; col++){
+                Vector2 leafTopLeft = new Vector2(
+                        logTopLeft.x() - (float) (Block.SIZE * NUM_LEAVES_SIZE) /2 + col * Block.SIZE,
+                        logTopLeft.y() - (float) (Block.SIZE * NUM_LEAVES_SIZE) /2 + row * Block.SIZE);
                 if(random.nextFloat() < LEAF_PROBABILITY) {
-                    Vector2 leafTopLeft = new Vector2(
-                            logTopLeft.x() - Block.SIZE + col * Block.SIZE,
-                            logTopLeft.y() - Block.SIZE + row * Block.SIZE);
-                    this.addLeaf(createLeaf(leafTopLeft));
+
+                    this.addLeaf(createLeaf(leafTopLeft, random));
+                }
+                if (random.nextFloat() < FRUIT_PROBABILITY) {
+                    this.addFruit(createFruit(leafTopLeft, cycleLength));
                 }
             }
         }
@@ -86,7 +90,7 @@ public class Tree {
         return log;
     }
 
-    private GameObject createLeaf(Vector2 topLeftCorner){
+    private GameObject createLeaf(Vector2 topLeftCorner, Random random){
         GameObject leaf = new GameObject(topLeftCorner, new Vector2(LEAF_SIZE, LEAF_SIZE), LEAF_RENDERABLE);
         leaf.setTag(LEAF_TAG);
         Runnable transitionTask = () -> {
@@ -102,13 +106,18 @@ public class Tree {
         return leaf;
     }
 
-    private GameObject createFruit(Vector2 topLeftCorner){
+    private GameObject createFruit(Vector2 topLeftCorner, float cycleLength){
         GameObject fruit = new GameObject(topLeftCorner, new Vector2(FRUIT_SIZE, FRUIT_SIZE),
                 FRUIT_RENDERABLE) {
             @Override
-            public void onCollisionEnter(GameObject other, Collision collision) {
-                super.onCollisionEnter(other, collision);
+            public void onCollisionExit(GameObject other) {
+                super.onCollisionExit(other);
                 this.setTag(EATEN_TAG);
+                this.renderer().setRenderable(null);
+                new ScheduledTask(this, cycleLength, false,
+                        () -> {setTag(FRUIT_TAG);
+                    renderer().setRenderable(FRUIT_RENDERABLE);}
+                );
             }
         };
         fruit.setTag(FRUIT_TAG);
