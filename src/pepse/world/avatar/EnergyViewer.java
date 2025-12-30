@@ -1,6 +1,7 @@
 package pepse.world.avatar;
 
 import danogl.GameObject;
+import danogl.components.CoordinateSpace;
 import danogl.gui.rendering.TextRenderable;
 import danogl.util.Vector2;
 
@@ -18,6 +19,7 @@ public class EnergyViewer{
         GameObject viewer = new GameObject(topLeftCorner, DIMENSIONS, textRenderable);
         viewer.addComponent((float deltaTime) -> textRenderable
                 .setString(PREFIX + energyProvider.get() + SUFFIX));
+        viewer.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         return viewer;
     }
 }
