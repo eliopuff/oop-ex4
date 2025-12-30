@@ -42,6 +42,8 @@ public class PepseGameManager extends GameManager {
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
+//        Vector2 deltaRelativeToAvatar =
+//                windowController.getWindowDimensions().mult(0.5f).add( avatar.getTopLeftCorner().mult(-1));
         this.windowController = windowController;
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
         setCamera(new Camera(avatar, Vector2.ZERO,
