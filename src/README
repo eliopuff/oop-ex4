@@ -1,4 +1,28 @@
 eliooo,sagig
 327122198,318674348
 
-###
+1. for the purpose of implementing avatar, we created the classes Avatar and EnergyViewer which shows the
+energy left for the avatar. We chose to design the changing behaviour of the avatar using if-else statements,
+because it felt the right decision. We considered the strategy pattern but decided against it because it
+would have added unnecessary complexity and we'd need to be on top of constantly switching strategies, rather
+than just checking a few boolean statements upon update. We chose to present the changing energy as a metric
+in the top left corner of the screen, and we constantly update it through passing a callback function that
+provides the exact number of the avatar's energy at that point. We used a game object and added a component
+for the energy viewer.
+
+2. we chose to implement trees using the required Flora class and added a Tree class, to represent all parts
+of a tree in the game. The tree contains data structures for the trunk, leaves and fruit of each
+tree.
+
+3. We also added a class called Chunk, an immutable section of the world that contains blocks and trees
+within a certain range of the game's world, the purpose for its creation being the ability to uphold an
+infinite world that is being updated on the fly, as the avatar moves along the x-axis. It provides a more
+readable and more compact way of handling the world data, for that purpose especially.
+
+4. In the class Terrain: we made the tags for blocks public, so that they can be accessed from avatar to see
+if upon collision it hits a block. We also created a static function groundHeightAtX0, since it shouldn't be
+different between instances.
+In class Avatar: we added a getter for the energy to keep EnergyViewer updated.
+Trees was made by us, so it's our own implementation - has a public constructor, and public fruit tag for the
+sake of avatar knowing it met a fruit. Chunk has public getters.
+In Flora, we used List<Tree> as the return value for the incomplete API provided in the exercise instructions.
