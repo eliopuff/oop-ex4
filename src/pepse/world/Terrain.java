@@ -15,8 +15,9 @@ import java.util.List;
 public class Terrain {
     private static final int TERRAIN_DEPTH = 20;
     private static final float HEIGHT_FACTOR = (2/3f);
-    private static final Color BASE_GROUND_COLOR = new Color(212,
-            123, 74);
+    private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
+    private static final Double NOISE_FACTOR = 7.0*Block.SIZE;
+
     /**
      * Tag for identifying bottom type of terrain blocks
      */
@@ -25,7 +26,6 @@ public class Terrain {
      * Tag for identifying top type of terrain blocks
      */
     public static final String BLOCK_TOP_TAG = "Block_top";
-    private static final Double NOISE_FACTOR = 7.0*Block.SIZE;
 
     private final float groundHeightAtX0;
     private final NoiseGenerator noiseGenerator;

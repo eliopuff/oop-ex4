@@ -28,7 +28,6 @@ public class Avatar extends GameObject {
     private static final int MAX_ENERGY = 100;
     private static final int FRUIT_ENERGY = 10;
 
-    private static final String IDLE_PATH = "assets/idle_0.png";
     private static final String[] IDLE_PATHS = {
             "assets/idle_0.png",
             "assets/idle_1.png",
@@ -73,7 +72,7 @@ public class Avatar extends GameObject {
     public Avatar(Vector2 topLeftCorner,
                   UserInputListener inputListener,
                   ImageReader imageReader){
-        super(Vector2.ZERO,
+        super(topLeftCorner,
                 Vector2.ONES.mult(AVATAR_SIZE),
                 new AnimationRenderable(IDLE_PATHS, imageReader, true, TIME_BETWEEN_FRAMES));
 
@@ -98,52 +97,16 @@ public class Avatar extends GameObject {
     @Override
     public void update(float deltaTime){
         super.update(deltaTime);
+
         boolean jump = inputListener.isKeyPressed(KeyEvent.VK_SPACE);
         boolean rightMove = inputListener.isKeyPressed(KeyEvent.VK_RIGHT);
         boolean leftMove = inputListener.isKeyPressed(KeyEvent.VK_LEFT);
         this.jumpReleased = !jump || this.jumpReleased;
-        float xVel = 0;
-        if(rightMove && !leftMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
-            if (renderer().getRenderable() != runRenderable) {
-                this.renderer().setRenderable(runRenderable);
-            }
-            renderer().setIsFlippedHorizontally(false);
-            xVel += VELOCITY_X;
-            if (this.getVelocity().y() == 0) {
-                this.energy -= RUN_COST;
-            }
-        }
-        if(leftMove && !rightMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
-            if (renderer().getRenderable() != runRenderable) {
-                this.renderer().setRenderable(runRenderable);
-            }
-            renderer().setIsFlippedHorizontally(true);
-            xVel -= VELOCITY_X;
-            if (this.getVelocity().y() == 0) {
-                this.energy -= RUN_COST;
-            }
-        }
-        transform().setVelocityX(xVel);
-        if(jump) {
-            if (getVelocity().y() == 0 && energy >= JUMP_COST) {
-                this.renderer().setRenderable(jumpRenderable);
-                this.energy -= JUMP_COST;
-                transform().setVelocityY(VELOCITY_Y);
-            }
-            else if (getVelocity().y() != 0 && energy >= DOUBLE_JUMP_COST && this.jumpReleased) {
-                this.energy -= DOUBLE_JUMP_COST;
-                transform().setVelocityY(VELOCITY_Y);
-            }
-            this.jumpReleased = false;
-        }
-        if (transform().getVelocity().equals(Vector2.ZERO) && this.energy <= MAX_ENERGY-IDLE_GAIN) {
-            if (renderer().getRenderable() != idleRenderable) {
-                this.renderer().setRenderable(idleRenderable);
-            }
-            this.energy += IDLE_GAIN;
-        }
-    }
 
+        runningUpdate(rightMove, leftMove);
+        jumpingUpdate(jump);
+        idleUpdate();
+    }
 
     /**
      * Handles collision events with other game objects.
@@ -166,6 +129,55 @@ public class Avatar extends GameObject {
             else{
                 energy += FRUIT_ENERGY;
             }
+        }
+    }
+
+    private void runningUpdate(boolean rightMove, boolean leftMove) {
+        float xVel = 0;
+        if(rightMove && !leftMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
+            if (renderer().getRenderable() != runRenderable) {
+                this.renderer().setRenderable(runRenderable);
+            }
+            renderer().setIsFlippedHorizontally(false);
+            xVel += VELOCITY_X;
+            if (this.getVelocity().y() == 0) {
+                this.energy -= RUN_COST;
+            }
+        }
+        if(leftMove && !rightMove && (energy >= RUN_COST || this.getVelocity().y() != 0)) {
+            if (renderer().getRenderable() != runRenderable) {
+                this.renderer().setRenderable(runRenderable);
+            }
+            renderer().setIsFlippedHorizontally(true);
+            xVel -= VELOCITY_X;
+            if (this.getVelocity().y() == 0) {
+                this.energy -= RUN_COST;
+            }
+        }
+        transform().setVelocityX(xVel);
+    }
+
+    private void jumpingUpdate(boolean jump) {
+        if(jump) {
+            if (getVelocity().y() == 0 && energy >= JUMP_COST) {
+                this.renderer().setRenderable(jumpRenderable);
+                this.energy -= JUMP_COST;
+                transform().setVelocityY(VELOCITY_Y);
+            }
+            else if (getVelocity().y() != 0 && energy >= DOUBLE_JUMP_COST && this.jumpReleased) {
+                this.energy -= DOUBLE_JUMP_COST;
+                transform().setVelocityY(VELOCITY_Y);
+            }
+            this.jumpReleased = false;
+        }
+    }
+
+    private void idleUpdate() {
+        if (transform().getVelocity().equals(Vector2.ZERO) && this.energy <= MAX_ENERGY-IDLE_GAIN) {
+            if (renderer().getRenderable() != idleRenderable) {
+                this.renderer().setRenderable(idleRenderable);
+            }
+            this.energy += IDLE_GAIN;
         }
     }
 }

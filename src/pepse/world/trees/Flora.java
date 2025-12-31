@@ -10,7 +10,6 @@ import java.util.function.Function;
  * A class responsible for generating flora (trees) in the game world.
  */
 public class Flora {
-    private static final int TREE_DIST = 125;
     private static final float PLACEMENT_PROBABILITY = 0.1f;
     private static final int TREE_HEIGHT = 10;
     private final Function<Float, Float> groundHeightFunction;

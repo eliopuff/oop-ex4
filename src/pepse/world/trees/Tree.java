@@ -1,7 +1,6 @@
 package pepse.world.trees;
 
 import danogl.GameObject;
-import danogl.collisions.Collision;
 import danogl.components.GameObjectPhysics;
 import danogl.components.ScheduledTask;
 import danogl.components.Transition;

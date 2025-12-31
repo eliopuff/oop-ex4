@@ -31,6 +31,7 @@ public class PepseGameManager extends GameManager {
     private static final int LAYER_SUN = Layer.BACKGROUND+2;
     private static final int LAYER_SUN_HALO = Layer.BACKGROUND+1;
     private static final int LEAF_LAYER =Layer.STATIC_OBJECTS-1 ;
+
     private Terrain terrain;
     private Avatar avatar;
     private Flora flora;
@@ -49,33 +50,39 @@ public class PepseGameManager extends GameManager {
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
-        avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
+
         this.windowController = windowController;
+
+        // add game objects to the game
+        avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
-        setCamera(new Camera(avatar, Vector2.ZERO,
-                windowController.getWindowDimensions(),
-                windowController.getWindowDimensions()));
+
         GameObject sky = Sky.create(windowController.getWindowDimensions());
         gameObjects().addGameObject(sky, Layer.BACKGROUND);
-        terrain = new Terrain(windowController.getWindowDimensions(),0);
 
-        gameObjects().addGameObject(Night.create(windowController.getWindowDimensions(),CYCLE_LENGTH),
-                LAYER_NIGHT);
+        GameObject night = Night.create(windowController.getWindowDimensions(), CYCLE_LENGTH);
+        gameObjects().addGameObject(night, LAYER_NIGHT);
+
         GameObject sun = Sun.create(windowController.getWindowDimensions(),CYCLE_LENGTH);
         gameObjects().addGameObject(sun, LAYER_SUN);
-        gameObjects().addGameObject(SunHalo.create(sun), LAYER_SUN_HALO);
+
+        GameObject sunHalo = SunHalo.create(sun);
+        gameObjects().addGameObject(sunHalo, LAYER_SUN_HALO);
+
         GameObject energyViewer = EnergyViewer.create(Vector2.ZERO, avatar::getEnergy);
         gameObjects().addGameObject(energyViewer, Layer.UI);
 
+        // chunk management
+        terrain = new Terrain(windowController.getWindowDimensions(),0);
         flora = new Flora(0, terrain::groundHeightAt, CYCLE_LENGTH);
-        currentChunk = createChunk(0);
-        previousChunk = createChunk(-1);
-        nextChunk = createChunk(1);
-        addChunk(previousChunk);
-        addChunk(currentChunk);
-        addChunk(nextChunk);
+        chunkInit();
 
+        setCamera(new Camera(avatar, Vector2.ZERO,
+                windowController.getWindowDimensions(),
+                windowController.getWindowDimensions()));
     }
+
+
 
     /**
      * Updates the game state, managing the loading and unloading of terrain chunks based
@@ -87,9 +94,12 @@ public class PepseGameManager extends GameManager {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+
         int chunkSize = (int)windowController.getWindowDimensions().x();
         int avatarChunkId =
                 (int) Math.floor(avatar.getCenter().x() / chunkSize);
+
+        // change chunks if needed
         if (previousChunk.getId() == avatarChunkId){
             removeChunk(nextChunk);
             nextChunk = currentChunk;
@@ -104,6 +114,15 @@ public class PepseGameManager extends GameManager {
             nextChunk = createChunk(avatarChunkId + 1);
             addChunk(nextChunk);
         }
+    }
+
+    private void chunkInit() {
+        currentChunk = createChunk(0);
+        previousChunk = createChunk(-1);
+        nextChunk = createChunk(1);
+        addChunk(previousChunk);
+        addChunk(currentChunk);
+        addChunk(nextChunk);
     }
 
     private Chunk createChunk(int chunkId) {
@@ -144,6 +163,8 @@ public class PepseGameManager extends GameManager {
             gameObjects().removeGameObject(block, Layer.STATIC_OBJECTS);
         }
     }
+
+
 
 
     /**
