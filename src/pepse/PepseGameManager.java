@@ -21,15 +21,15 @@ import pepse.world.daynight.SunHalo;
 import pepse.world.trees.Flora;
 import pepse.world.trees.Tree;
 
-import java.util.List;
-
-
+/**
+ * The main class of the Pepse game. Manages the initialization and updating of game objects.
+ * @author sagig, eliooo
+ */
 public class PepseGameManager extends GameManager {
     private static final int CYCLE_LENGTH = 30;
     private static final int LAYER_NIGHT = Layer.UI-2;
     private static final int LAYER_SUN = Layer.BACKGROUND+2;
     private static final int LAYER_SUN_HALO = Layer.BACKGROUND+1;
-    private static final int BLOCK_RANGE_MAX = 200;
     private static final int LEAF_LAYER =Layer.STATIC_OBJECTS-1 ;
     private Terrain terrain;
     private Avatar avatar;
@@ -37,13 +37,19 @@ public class PepseGameManager extends GameManager {
     private Chunk currentChunk, previousChunk, nextChunk;
     private WindowController windowController;
 
+    /**
+     * Initializes the game by setting up the avatar, terrain, flora, and other game objects.
+     *
+     * @param imageReader      The image reader for loading images.
+     * @param soundReader      The sound reader for loading sounds.
+     * @param inputListener    The user input listener for handling user inputs.
+     * @param windowController The window controller for managing the game window.
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         avatar = new Avatar(Vector2.ZERO, inputListener, imageReader);
-//        Vector2 deltaRelativeToAvatar =
-//                windowController.getWindowDimensions().mult(0.5f).add( avatar.getTopLeftCorner().mult(-1));
         this.windowController = windowController;
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
         setCamera(new Camera(avatar, Vector2.ZERO,
@@ -70,6 +76,13 @@ public class PepseGameManager extends GameManager {
         addChunk(nextChunk);
 
     }
+
+    /**
+     * Updates the game state, managing the loading and unloading of terrain chunks based
+     * on the avatar's position.
+     *
+     * @param deltaTime The time elapsed since the last update.
+     */
 
     @Override
     public void update(float deltaTime) {
@@ -133,7 +146,11 @@ public class PepseGameManager extends GameManager {
     }
 
 
-
+    /**
+     * The main method to run the Pepse game.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         new PepseGameManager().run();
     }

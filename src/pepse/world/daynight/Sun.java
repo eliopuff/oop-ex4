@@ -11,6 +11,9 @@ import pepse.world.Terrain;
 import java.awt.*;
 import java.util.function.Consumer;
 
+/**
+ * A class representing the sun in the game world.
+ */
 public class Sun {
     private static final Vector2 SUN_DIMENSIONS = new Vector2(150, 150);
     private static final String SUN_TAG = "sun";
@@ -18,6 +21,13 @@ public class Sun {
     private static final float INITIAL_ANGLE = 0.0f;
     private static final float FINAL_ANGLE = 360.0f;
 
+    /**
+     * Creates a sun GameObject that moves in a circular path to simulate day-night cycles.
+     *
+     * @param windowDimensions The dimensions of the game window.
+     * @param cycleLength      The length of a full day-night cycle.
+     * @return A GameObject representing the sun.
+     */
     public static GameObject create(Vector2 windowDimensions, float
             cycleLength){
         Renderable renderable = new OvalRenderable(Color.YELLOW);

@@ -13,6 +13,9 @@ import pepse.world.trees.Tree;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 
+/**
+ * A class representing the avatar controlled by the player.
+ */
 public class Avatar extends GameObject {
     private static final int RUN_COST = 2;
     private static final int JUMP_COST = 20;
@@ -52,10 +55,21 @@ public class Avatar extends GameObject {
     private final UserInputListener inputListener;
     private boolean jumpReleased;
 
+    /** Returns the current energy level of the avatar.
+     *
+     * @return The current energy level.
+     */
     public int getEnergy() {
         return energy;
     }
 
+    /**
+     * Constructs an Avatar object with the specified top-left corner, input listener, and image reader.
+     *
+     * @param topLeftCorner  The top-left corner of the avatar.
+     * @param inputListener  The user input listener for controlling the avatar.
+     * @param imageReader    The image reader for loading avatar animations.
+     */
     public Avatar(Vector2 topLeftCorner,
                   UserInputListener inputListener,
                   ImageReader imageReader){
@@ -64,8 +78,10 @@ public class Avatar extends GameObject {
                 new AnimationRenderable(IDLE_PATHS, imageReader, true, TIME_BETWEEN_FRAMES));
 
         this.idleRenderable = this.renderer().getRenderable();
-        this.runRenderable = new AnimationRenderable(RUN_PATHS, imageReader, true, TIME_BETWEEN_FRAMES);
-        this.jumpRenderable = new AnimationRenderable(JUMP_PATHS, imageReader, false, TIME_BETWEEN_FRAMES);
+        this.runRenderable = new AnimationRenderable(RUN_PATHS, imageReader,
+                true, TIME_BETWEEN_FRAMES);
+        this.jumpRenderable = new AnimationRenderable(JUMP_PATHS, imageReader,
+                false, TIME_BETWEEN_FRAMES);
         this.inputListener = inputListener;
 
         physics().preventIntersectionsFromDirection(Vector2.ZERO);
@@ -74,6 +90,11 @@ public class Avatar extends GameObject {
         this.energy = MAX_ENERGY;
     }
 
+    /**
+     * Updates the avatar's state based on user input and energy levels.
+     *
+     * @param deltaTime The time elapsed since the last update.
+     */
     @Override
     public void update(float deltaTime){
         super.update(deltaTime);
@@ -123,6 +144,13 @@ public class Avatar extends GameObject {
         }
     }
 
+
+    /**
+     * Handles collision events with other game objects.
+     *
+     * @param other     The other game object involved in the collision.
+     * @param collision The collision details.
+     */
     @Override
     public void onCollisionEnter(GameObject other, Collision collision) {
         super.onCollisionEnter(other, collision);

@@ -24,6 +24,10 @@ public class Tree {
     private static final Renderable LEAF_RENDERABLE = new RectangleRenderable(LEAF_COLOR);
     private static final Renderable FRUIT_RENDERABLE = new OvalRenderable(FRUIT_COLOR);
     private static final String LOG_TAG = "log";
+
+    /**
+     * Tag for identifying fruit type of tree objects
+     */
     public static final String FRUIT_TAG = "fruit";
     private static final String LEAF_TAG = "leaf";
     private static final String EATEN_TAG = "eaten";
@@ -37,14 +41,25 @@ public class Tree {
     private final ArrayList<GameObject> leaves = new ArrayList<>();
     private final ArrayList<GameObject> fruits = new ArrayList<>();
 
+    // Getters and setters
+
+    /**  Get the log of the tree
+     * @return the log GameObject
+     */
     public GameObject getLog(){
         return this.log;
     }
 
+    /**  Set the log of the tree
+     * @param log the log GameObject to set
+     */
     public void setLog(GameObject log){
         this.log = log;
     }
 
+    /**  Get the leaves of the tree
+     * @return a list of leaf GameObjects
+     */
     public List<GameObject> getLeaves(){
         return new ArrayList<>(this.leaves);
     }
@@ -53,6 +68,9 @@ public class Tree {
         this.leaves.add(leaf);
     }
 
+    /**  Get the fruits of the tree
+     * @return a list of fruit GameObjects
+     */
     public List<GameObject> getFruits(){
         return new ArrayList<>(this.fruits);
     }
@@ -61,6 +79,12 @@ public class Tree {
         this.fruits.add(fruit);
     }
 
+    /**  Constructor for the Tree class
+     * @param bottom the bottom position of the tree
+     * @param height the height of the tree in blocks
+     * @param seed the seed for random generation
+     * @param cycleLength the cycle length for fruit regrowth
+     */
     public Tree(Vector2 bottom, int height, int seed, float cycleLength) {
         Vector2 logTopLeft = new Vector2(bottom.x(), bottom.y() - height*Block.SIZE - Block.SIZE);
         Random random = new Random(seed);
